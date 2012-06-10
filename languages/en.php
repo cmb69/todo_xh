@@ -27,4 +27,12 @@ $plugin_tx['todo']['state_todo']="To do";
 $plugin_tx['todo']['state_inprogress']="In progress";
 $plugin_tx['todo']['state_done']="Done";
 
+$plugin_tx['todo']['syscheck_title']="System check";
+$plugin_tx['todo']['syscheck_phpversion']="PHP version &ge; %s";
+$plugin_tx['todo']['syscheck_extension']="Extension '%s' loaded";
+$plugin_tx['todo']['syscheck_magic_quotes']="Magic quotes runtime off";
+$plugin_tx['todo']['syscheck_encoding']="Encoding 'UTF-8' configured";
+$plugin_tx['todo']['syscheck_jquery']="<a href=\"http://www.cmsimple-xh.com/wiki/doku.php/plugins:jquery4cmsimple\">jQuery4CMSimple plugin</a> installed";
+$plugin_tx['todo']['syscheck_writable']="Folder '%s' writable";
+
 ?>
