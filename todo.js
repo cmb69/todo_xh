@@ -18,14 +18,14 @@
         add: function(page, name) {
             var dlg = $('#todo_edit');
             dlg.dialog('option', 'buttons', [{
-                text: Todo.TX.CANCEL,
-                click : function() {dlg.dialog('close')}
-            }, {
                 text: Todo.TX.OK,
                 click: function() {
                     Todo.post(page, name, null);
                     dlg.dialog('close')
                 }
+            }, {
+                text: Todo.TX.CANCEL,
+                click : function() {dlg.dialog('close')}
             }]);
             dlg.dialog({title: Todo.TX.NEW_TASK});
             var flds = ['task', 'link', 'notes', 'resp', 'state', 'date'];
@@ -44,14 +44,14 @@
             }
             var id = ids[0];
             dlg.dialog('option', 'buttons', [{
-                text: Todo.TX.CANCEL,
-                click: function() {dlg.dialog('close')}
-            }, {
                 text: Todo.TX.OK,
                 click: function() {
                     Todo.post(page, name, id);
                     dlg.dialog('close')
                 }
+            }, {
+                text: Todo.TX.CANCEL,
+                click: function() {dlg.dialog('close')}
             }]);
             dlg.dialog({title: Todo.TX.TASK + ' ' + id});
             $.get('?' + page + '&todo_name=' + name + '&todo_act=get&todo_id=' + id, '', function(data) {
@@ -79,9 +79,6 @@
         move: function(page, name) {
             var dlg = $('#todo_move');
             dlg.dialog('option', 'buttons', [{
-                text: Todo.TX.CANCEL,
-                click: function() {$(this).dialog('close')}
-            }, {
                 text: Todo.TX.OK,
                 click: function() {
                     var dname = $(this).find('select').val();
@@ -91,6 +88,9 @@
                     $('#todo_grid_' + name).flexReload();
                     $('#todo_grid_' + dname).flexReload();
                 }
+            }, {
+                text: Todo.TX.CANCEL,
+                click: function() {$(this).dialog('close')}
             }]);
             dlg.dialog('open')
         },
