@@ -1,2 +1,5 @@
+Version 1alpha1 - internally released TODO
+cmb	added i18n
+
 Version 1dev1 - internally released 2012-06-06
 cmb	initial release

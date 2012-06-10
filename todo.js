@@ -1,3 +1,10 @@
+/**
+ * JS of Todo_XH.
+ *
+ * Copyright (c) 2012 Christoph M. Becker (see license.txt)
+ */
+
+
 (function($) {
 
     Todo = {

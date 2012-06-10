@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Front-end of Todo_XH.
+ *
+ * Copyright (c) 2012 Christoph M. Becker (see license.txt)
+ */
+
+
+if (!defined('CMSIMPLE_XH_VERSION')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+}
+
+
+define('TODO_VERSION', '1alpha1');
+
+
 
 function todo_is_member() {
     if (session_id() == '') {session_start();}
