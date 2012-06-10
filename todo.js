@@ -71,6 +71,7 @@
         },
         
         remove: function(page, name) {
+            if (Todo.sel(name).length < 1 || !confirm(Todo.TX.CONFIRM_DELETE)) {return}
             $.post('?' + page + '&todo_name=' + name + '&todo_act=delete', {'todo_ids[]': Todo.sel(name)},
                     function() {$('#todo_grid_' + name).flexReload()});
         },
