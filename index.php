@@ -33,7 +33,7 @@ function todo_data($name, $ndata = NULL) {
  * @global string $hjs
  */
 function todo_hjs() {
-    global $pth, $hjs, $plugin_cf;
+    global $pth, $hjs, $plugin_cf, $plugin_tx;
     
     include_once $pth['folder']['plugins'].'jquery/jquery.inc.php';
     include_jquery();
@@ -41,15 +41,28 @@ function todo_hjs() {
     $hjs .= tag('link rel="stylesheet" href="'.$pth['folder']['plugins'].'todo/flexigrid/css/flexigrid.pack.css" type="text/css"')."\n";
     include_jqueryplugin('flexigrid', $pth['folder']['plugins'].'todo/flexigrid/js/flexigrid.pack.js');
     $hjs .= '<script type="text/javascript" src="'.$pth['folder']['plugins'].'todo/todo.js"></script>'."\n";
-    $hjs .= '<script type="text/javascript">/* <![CDATA[ */Todo.isMember = '
-	    .(todo_is_member() ? 'true' : 'false').';/* ]]> */</script>'."\n";
+    $hjs .= '<script type="text/javascript">/* <![CDATA[ */'."\n"
+	    .'Todo.isMember = '.(todo_is_member() ? 'true' : 'false').';'."\n"
+	    .'Todo.TX = {';
+    $first = TRUE;
+    foreach ($plugin_tx['todo'] as $key => $val) {
+	if (strpos($key, 'js_') === 0) {
+	    if ($first) {$first = FALSE;} else {$hjs .= ', ';}
+	    $hjs .= strtoupper(substr($key, 3)).': \''.addcslashes($val, "\0..\37\\\'").'\'';
+	}
+    }
+    $hjs .= '}'."\n"
+	    .'/* ]]> */</script>'."\n";
 }
 
 
 function todo_state_select() {
+    global $plugin_tx;
+    
+    $ptx = $plugin_tx['todo'];
     $o = '<select id="todo_state" name="todo_state">';
     foreach (array('idea', 'todo', 'inprogress', 'done') as $state) {
-	$o .= '<option>'.$state.'</option>';
+	$o .= '<option value="'.$state.'">'.$ptx['state_'.$state].'</option>';
     }
     $o .= '</select>';
     return $o;
@@ -57,15 +70,22 @@ function todo_state_select() {
 
 
 function todo_json_record($name, $rec) {
+    global $plugin_tx;
+    
     $o = '{';
     foreach (array('task', 'link', 'notes', 'resp', 'state', 'date') as $fld) {
 	if ($fld != 'task') {$o .= ', ';}
-	$val = $_GET['todo_act'] == 'list' ? htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8') : addcslashes($rec[$fld], "\0..\37\"\\");
+	$val = $_GET['todo_act'] == 'list'
+		? htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8')
+		: addcslashes($rec[$fld], "\0..\37\"\\");
 	if ($fld == 'link' && $_GET['todo_act'] == 'list') {
 	    $val = '<a href=\"'.$val.'\">Discussion</a>';
-	} elseif ($fld == 'state' && $_GET['todo_act'] == 'list') {
-	    $colors = array('idea' => 'black', 'todo' => 'green', 'inprogress' => 'red', 'done' => 'orange');
-	    $val = '<span style=\"color: '.$colors[$val].'\">'.$val.'</span>';
+	} elseif ($fld == 'state') {
+	    if ($_GET['todo_act'] == 'list') {
+		$colors = array('idea' => 'black', 'todo' => 'green', 'inprogress' => 'red', 'done' => 'orange');
+		$val = '<span style=\"color: '.$colors[$val].'\">'
+			.htmlspecialchars($plugin_tx['todo']['state_'.$val], ENT_QUOTES, 'UTF-8').'</span>';
+	    }
 	} elseif ($fld == 'date') {
 	    $val = empty($val) ? '' : date('Y-m-d', $val);
 	}

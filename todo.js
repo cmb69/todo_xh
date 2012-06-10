@@ -10,14 +10,17 @@
     
         add: function(page, name) {
             var dlg = $('#todo_edit');
-            dlg.dialog('option', 'buttons', {
-                "Cancel": function() {dlg.dialog('close')},
-                "Ok": function() {
+            dlg.dialog('option', 'buttons', [{
+                text: Todo.TX.CANCEL,
+                click : function() {dlg.dialog('close')}
+            }, {
+                text: Todo.TX.OK,
+                click: function() {
                     Todo.post(page, name, null);
                     dlg.dialog('close')
                 }
-            });
-            dlg.dialog({title: 'New Task'});
+            }]);
+            dlg.dialog({title: Todo.TX.NEW_TASK});
             var flds = ['task', 'link', 'notes', 'resp', 'state', 'date'];
             for (var i = 0; i < flds.length; i++) {
                 dlg.find('[name="todo_' + flds[i] + '"]').val('');
@@ -29,18 +32,21 @@
             var dlg = $('#todo_edit');
             var ids = Todo.sel(name);
             if (ids.length < 1) {
-                alert('Select an entry to edit!');
+                alert(Todo.TX.SELECT_ENTRY);
                 return;
             }
             var id = ids[0];
-            dlg.dialog('option', 'buttons', {
-                "Cancel": function() {dlg.dialog('close')},
-                "Ok": function() {
+            dlg.dialog('option', 'buttons', [{
+                text: Todo.TX.CANCEL,
+                click: function() {dlg.dialog('close')}
+            }, {
+                text: Todo.TX.OK,
+                click: function() {
                     Todo.post(page, name, id);
                     dlg.dialog('close')
                 }
-            });
-            dlg.dialog({title: 'Task ' + id});
+            }]);
+            dlg.dialog({title: Todo.TX.TASK + ' ' + id});
             $.get('?' + page + '&todo_name=' + name + '&todo_act=get&todo_id=' + id, '', function(data) {
                 rec = eval('(' + data + ')');
                 for (prop in rec) {
@@ -65,9 +71,12 @@
         
         move: function(page, name) {
             var dlg = $('#todo_move');
-            dlg.dialog('option', 'buttons', {
-                "Cancel": function() {$(this).dialog('close')},
-                "Ok": function() {
+            dlg.dialog('option', 'buttons', [{
+                text: Todo.TX.CANCEL,
+                click: function() {$(this).dialog('close')}
+            }, {
+                text: Todo.TX.OK,
+                click: function() {
                     var dname = $(this).find('select').val();
                     $.post('?' + page + '&todo_name=' + name + '&todo_act=move',
                             {'todo_ids[]': Todo.sel(name), 'todo_dest': dname}, function(d) {console.log(d)});
@@ -75,37 +84,45 @@
                     $('#todo_grid_' + name).flexReload();
                     $('#todo_grid_' + dname).flexReload();
                 }
-            });
+            }]);
             dlg.dialog('open')
         },
         
         init: function(page, name) {
             var btns = !Todo.isMember ? null : [
-                {name: 'Add', bclass: 'todo_btn_add', onpress: function() {Todo.add(page, name)}},
-                {name: 'Edit', bclass: 'todo_btn_edit', onpress: function() {Todo.edit(page, name)}},
-                {name: 'Remove', bclass: 'todo_btn_remove', onpress: function() {Todo.remove(page, name)}},
-                {name: 'Move', bclass: 'todo_btn_move', onpress: function() {Todo.move(page, name)}}
+                {name: Todo.TX.ADD, bclass: 'todo_btn_add', onpress: function() {Todo.add(page, name)}},
+                {name: Todo.TX.EDIT, bclass: 'todo_btn_edit', onpress: function() {Todo.edit(page, name)}},
+                {name: Todo.TX.REMOVE, bclass: 'todo_btn_remove', onpress: function() {Todo.remove(page, name)}},
+                {name: Todo.TX.MOVE, bclass: 'todo_btn_move', onpress: function() {Todo.move(page, name)}}
             ];
             $('#todo_grid_' + name).flexigrid({
                 url: '?' + page + '&todo_name=' + name + '&todo_act=list',
                 method: 'GET',
                 dataType: 'json',
                 colModel: [
-                    {display: 'Task', name: 'task', width: 128, sortable: true, align: 'left'},
-                    {display: 'Link', name: 'link', width: 64, sortable: true, align: 'left'},
-                    {display: 'Notes', name: 'notes', width: 256, sortable: true, align: 'left'},
-                    {display: 'Responsible', name: 'resp', width: 64, sortable: true, align: 'left'},
-                    {display: 'State', name: 'state', width: 64, sortable: true, align: 'left'},
-                    {display: 'Date', name: 'date', width: 64, sortable: true, align: 'left'}
+                    {display: Todo.TX.TASK, name: 'task', width: 200, sortable: true, align: 'left'},
+                    {display: Todo.TX.LINK, name: 'link', width: 100, sortable: true, align: 'left'},
+                    {display: Todo.TX.NOTES, name: 'notes', width: 400, sortable: true, align: 'left'},
+                    {display: Todo.TX.RESPONSIBLE, name: 'resp', width: 100, sortable: true, align: 'left'},
+                    {display: Todo.TX.STATE, name: 'state', width: 100, sortable: true, align: 'left'},
+                    {display: Todo.TX.DATE, name: 'date', width: 100, sortable: true, align: 'left'}
                 ],
                 buttons: btns,
                 searchitems: [
-                    {display: 'Task', name: 'task'},
-                    {display: 'Notes', name: 'notes', isdefault: true}
+                    {display: Todo.TX.TASK, name: 'task'},
+                    {display: Todo.TX.NOTES, name: 'notes', isdefault: true}
                 ],
                 sortname: 'task',
                 sortorder: 'asc',
-                usepager: true
+                usepager: true,
+                height: 'auto',
+                errormsg: Todo.TX.ERRORMSG,
+                pagestat: Todo.TX.PAGESTAT,
+                pagetext: Todo.TX.PAGE,
+                outof: Todo.TX.OUTOF,
+                findtext: Todo.TX.FINDTEXT,
+                procmsg: Todo.TX.PROCMSG,
+                nomsg: Todo.TX.NOMSG
             })
         }
     
