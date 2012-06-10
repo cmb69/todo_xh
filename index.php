@@ -221,7 +221,7 @@ function todo($name) {
 	}
     }
     todo_hjs();
-    $o = '<table id="todo_grid_'.$name.'"></table>';
+    $o = '<table id="todo_grid_'.$name.'" class="todo_grid"></table>';
     $o .= '<form id="todo_edit">'
 	    .'<label for="todo_task" class="todo_label">Name</label>'
 	    .tag('input type="text" id="todo_task" name="todo_task"').tag('br')
