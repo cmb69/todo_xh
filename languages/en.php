@@ -23,10 +23,12 @@ $plugin_tx['todo']['js_procmsg']="Processing, please wait ...";
 $plugin_tx['todo']['js_nomsg']="No items";
 $plugin_tx['todo']['js_confirm_delete']="The selected entries will be deleted!";
 
-$plugin_tx['todo']['state_idea']="Idea";
-$plugin_tx['todo']['state_todo']="To do";
-$plugin_tx['todo']['state_inprogress']="In progress";
-$plugin_tx['todo']['state_done']="Done";
+$plugin_tx['todo']['state_idea']="idea";
+$plugin_tx['todo']['state_todo']="to do";
+$plugin_tx['todo']['state_inprogress']="in progress";
+$plugin_tx['todo']['state_done']="done";
+
+$plugin_tx['todo']['link_text']="Discussion";
 
 $plugin_tx['todo']['syscheck_title']="System check";
 $plugin_tx['todo']['syscheck_phpversion']="PHP version &ge; %s";
@@ -35,5 +37,8 @@ $plugin_tx['todo']['syscheck_magic_quotes']="Magic quotes runtime off";
 $plugin_tx['todo']['syscheck_encoding']="Encoding 'UTF-8' configured";
 $plugin_tx['todo']['syscheck_jquery']="<a href=\"http://www.cmsimple-xh.com/wiki/doku.php/plugins:jquery4cmsimple\">jQuery4CMSimple plugin</a> installed";
 $plugin_tx['todo']['syscheck_writable']="Folder '%s' writable";
+
+$plugin_tx['todo']['cf_folder_data']="Path to a folder relative to the CMSimple root directory, where to store the plugin's data. E.g. \"userfiles/todo/\". Leave empty to store in the plugin's data/ folder.";
+$plugin_tx['todo']['cf_col_widths']="The widths of the grid's columns in pixel.";
 
 ?>

@@ -16,17 +16,39 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
 define('TODO_VERSION', '1alpha1');
 
 
-
+/**
+ * Returns whether a member is logged in (Memberpages or Register)
+ *
+ * @return bool
+ */
 function todo_is_member() {
     if (session_id() == '') {session_start();}
-    return isset($_SESSION['Name']);
+    return isset($_SESSION['Name']) || isset($_SESSION['username']);
 }
 
 
+/**
+ * Returns the data folder's path.
+ *
+ * @param string $forum  The name of the forum.
+ * @return string
+ */
 function todo_data_folder() {
-    global $pth;
-    
-    return $pth['folder']['plugins'].'todo/data/';
+    global $pth, $plugin_cf;
+
+    $pcf = $plugin_cf['todo'];
+    if (empty($pcf['folder_data'])) {
+	$fn = $pth['folder']['plugins'].'todo/data/';
+    } else {
+	$fn = $pth['folder']['base'].$pcf['folder_data'];
+	if ($fn{strlen($fn) - 1} != '/') {$fn .= '/';}
+    }
+    if (file_exists($fn)) {
+	if (!is_dir($fn)) {e('cntopen', 'folder', $fn);}
+    } else {
+	if (!mkdir($fn, 0777, TRUE)) {e('cntsave', 'folder', $fn);}
+    }
+    return $fn;
 }
 
 
@@ -90,6 +112,7 @@ function todo_state_select() {
 function todo_json_record($name, $rec) {
     global $plugin_tx;
     
+    $ptx = $plugin_tx['todo'];
     $o = '{';
     foreach (array('task', 'link', 'notes', 'resp', 'state', 'date') as $fld) {
 	if ($fld != 'task') {$o .= ', ';}
@@ -97,12 +120,12 @@ function todo_json_record($name, $rec) {
 		? preg_replace('/\r\n|\n|\r/u', tag('br'), htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8'))
 		: addcslashes($rec[$fld], "\0..\37\"\\");
 	if ($fld == 'link' && $_GET['todo_act'] == 'list') {
-	    $val = empty($val) ? '' : '<a href=\"'.$val.'\">Discussion</a>';
+	    $val = empty($val) ? '' : '<a href=\"'.$val.'\">'.$ptx['link_text'].'</a>';
 	} elseif ($fld == 'state') {
 	    if ($_GET['todo_act'] == 'list') {
 		$colors = array('idea' => 'black', 'todo' => 'green', 'inprogress' => 'red', 'done' => 'orange');
 		$val = '<span style=\"color: '.$colors[$val].'\">'
-			.htmlspecialchars($plugin_tx['todo']['state_'.$val], ENT_QUOTES, 'UTF-8').'</span>';
+			.htmlspecialchars($ptx['state_'.$val], ENT_QUOTES, 'UTF-8').'</span>';
 	    }
 	} elseif ($fld == 'date') {
 	    $val = empty($val) ? '' : date('Y-m-d', $val);

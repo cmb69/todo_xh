@@ -140,8 +140,8 @@
 
     $(function() {
         var dlg = $('#todo_edit');
-        dlg.find('[name="todo_date"]').datepicker({dateFormat: 'yy-mm-dd'});
         dlg.dialog({autoOpen: false, modal: true, width: 536});
+        dlg.find('[name="todo_date"]').datepicker({dateFormat: 'yy-mm-dd'});
         
         var dlg = $('#todo_move');
         dlg.dialog({autoOpen: false, modal: true})
