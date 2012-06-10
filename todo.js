@@ -66,13 +66,13 @@
         post: function(page, name, id) {
             var dlg = $('#todo_edit');
             $.post('?' + page + '&todo_name=' + name + '&todo_act=post' + (id != null ? '&todo_id=' + id : ''),
-                    $('#todo_edit').serialize(), function(d) {console.log(d)});
-            $('#todo_grid_' + name).flexReload();
+                    $('#todo_edit').serialize(),
+                    function() {$('#todo_grid_' + name).flexReload()});
         },
         
         remove: function(page, name) {
-            $.post('?' + page + '&todo_name=' + name + '&todo_act=delete', {'todo_ids[]': Todo.sel(name)}, function(d) {console.log(d)});
-            $('#todo_grid_' + name).flexReload()
+            $.post('?' + page + '&todo_name=' + name + '&todo_act=delete', {'todo_ids[]': Todo.sel(name)},
+                    function() {$('#todo_grid_' + name).flexReload()});
         },
         
         
@@ -83,10 +83,12 @@
                 click: function() {
                     var dname = $(this).find('select').val();
                     $.post('?' + page + '&todo_name=' + name + '&todo_act=move',
-                            {'todo_ids[]': Todo.sel(name), 'todo_dest': dname}, function(d) {console.log(d)});
-                    $(this).dialog('close');
-                    $('#todo_grid_' + name).flexReload();
-                    $('#todo_grid_' + dname).flexReload();
+                            {'todo_ids[]': Todo.sel(name), 'todo_dest': dname},
+                            function() {
+                                $(this).dialog('close');
+                                $('#todo_grid_' + name).flexReload();
+                                $('#todo_grid_' + dname).flexReload();
+                            });
                 }
             }, {
                 text: Todo.TX.CANCEL,
