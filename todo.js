@@ -134,7 +134,7 @@
                 findtext: Todo.TX.FINDTEXT,
                 procmsg: Todo.TX.PROCMSG,
                 nomsg: Todo.TX.NOMSG,
-                onError: function() {$(this).flexAddData({rows:[],page:1,total:0});}
+                onError: function() {$(this).flexAddData({rows:[],page:1,total:0});} // TODO
             })
         }
     }

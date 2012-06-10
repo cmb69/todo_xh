@@ -35,6 +35,7 @@ $plugin_tx['todo']['move_destination']="Destination";
 
 $plugin_tx['todo']['msg_invalid_name']="Invalid TODO list name (may contain a-z, 0-9 and - only):";
 $plugin_tx['todo']['msg_powered_by']="Powered by <a href=\"http://3-magi.net/?CMSimple_XH/Todo_XH\">Todo_XH</a>";
+$plugin_tx['todo']['msg_no_js']="To view the TODO list, you have to activate Javascript!";
 
 $plugin_tx['todo']['syscheck_title']="System check";
 $plugin_tx['todo']['syscheck_phpversion']="PHP version &ge; %s";

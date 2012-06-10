@@ -330,7 +330,7 @@ function todo_edit_dlg() {
     global $plugin_tx;
     
     $ptx = $plugin_tx['todo'];
-    return '<form id="todo_edit">'
+    return '<form id="todo_edit" style="display: none">'
 	    .'<label for="todo_task" class="todo_label">'.$ptx['js_task'].'</label>'
 	    .tag('input type="text" id="todo_task" name="todo_task"').tag('br')
 	    .'<label for="todo_link" class="todo_label">'.$ptx['js_link'].'</label>'
@@ -357,7 +357,7 @@ function todo_move_dlg() {
     $ptx = $plugin_tx['todo'];
     $todos = glob(todo_data_folder().'*.dat');
     $todos = array_map(create_function('$x', 'return basename($x, \'.dat\');'), $todos);
-    $o = '<form id="todo_move" title="'.$ptx['move_title'].'">'
+    $o = '<form id="todo_move" title="'.$ptx['move_title'].'" style="display: none">'
 	    .'<label for="todo_lists" class="todo_label">'.$ptx['move_destination'].'</label>'
 	    .'<select id="todo_lists">';
     foreach ($todos as $todo) {
@@ -403,7 +403,8 @@ function todo($name) {
 	$o .= todo_edit_dlg().todo_move_dlg();
 	$again = TRUE;
     }
-    $o .= '<table id="todo_grid_'.$name.'" class="todo_grid"></table>';
+    $o .= '<table id="todo_grid_'.$name.'" class="todo_grid"></table>'
+	    .'<noscript class="cmsimplecore_warning">'.$ptx['msg_no_js'].'</noscript>';
     $hjs .= '<script type="text/javascript">/* <![CDATA[ */'
 	    ."jQuery(function() {Todo.init('$su', '$name')})"
 	    .'/* ]]> */</script>';
