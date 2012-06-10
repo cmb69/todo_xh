@@ -86,15 +86,16 @@
                     $.post('?' + page + '&todo_name=' + name + '&todo_act=move',
                             {'todo_ids[]': Todo.sel(name), 'todo_dest': dname},
                             function() {
-                                $(this).dialog('close');
                                 $('#todo_grid_' + name).flexReload();
                                 $('#todo_grid_' + dname).flexReload();
                             });
+                    $(this).dialog('close');
                 }
             }, {
                 text: Todo.TX.CANCEL,
                 click: function() {$(this).dialog('close')}
             }]);
+            dlg.find('#todo_lists option[value="' + name + '"]').remove();
             dlg.dialog('open')
         },
         
@@ -132,10 +133,10 @@
                 outof: Todo.TX.OUTOF,
                 findtext: Todo.TX.FINDTEXT,
                 procmsg: Todo.TX.PROCMSG,
-                nomsg: Todo.TX.NOMSG
+                nomsg: Todo.TX.NOMSG,
+                onError: function() {$(this).flexAddData({rows:[],page:1,total:0});}
             })
         }
-    
     }
 
     $(function() {
@@ -144,7 +145,10 @@
         dlg.find('[name="todo_date"]').datepicker({dateFormat: 'yy-mm-dd'});
         
         var dlg = $('#todo_move');
-        dlg.dialog({autoOpen: false, modal: true})
+        var opts = dlg.find('#todo_lists').html();
+        dlg.dialog({autoOpen: false, modal: true, width: 536, close: function() {
+            dlg.find('#todo_lists').html(opts)
+        }})
     })
 
 })(jQuery)

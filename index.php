@@ -52,23 +52,67 @@ function todo_data_folder() {
 }
 
 
-function todo_data($name, $ndata = NULL) {
-    $fn = todo_data_folder().$name.'.dat';
-    if (!isset($ndata)) { // read
-	$cnt = file_get_contents($fn);
-	$data[$name] = $cnt !== FALSE ? unserialize($cnt) : array();
-    } else { // write
-	$data[$name] = $ndata;
-	$fh = fopen($fn, 'wb');
-	fwrite($fh, serialize($data[$name]));
-	fclose($fh);
+/**
+ * Lock resp. unlocks the TODO list.
+ *
+ * @param string $name  The name of the TODO list.
+ * @param int $op  The lock operation.
+ * @return void
+ */
+function todo_lock($name, $op) {
+    static $fh = array();
+    
+    $fn = todo_data_folder().$name.'.lck';
+    switch ($op) {
+	case LOCK_SH: case LOCK_EX:
+	    $fh[$name] = fopen($fn, 'r+b');
+	    flock($fh[$name], $op);
+	    break;
+	case LOCK_UN:
+	    flock($fh[$name], $op);
+	    fclose($fh[$name]);
+	    break;
     }
-    return $data[$name];
+}
+
+
+// TODO: error handling
+
+/**
+ * Returns the TODO list.
+ *
+ * @param string $name  The name of the TODO list.
+ * @return array
+ */
+function todo_read_data($name) {
+    $fn = todo_data_folder().$name.'.dat';
+    $cnt = file_get_contents($fn);
+    $data = $cnt !== FALSE ? unserialize($cnt) : array();
+    return $data;
 }
 
 
 /**
+ * Saves the TODO list.
+ *
+ * @param string $name  The name of the TODO list.
+ * @param array $data
+ * @return void
+ */
+function todo_write_data($name, $data) {
+    $fn = todo_data_folder().$name.'.dat';
+    if (($fh = fopen($fn, 'wb')) === FALSE || fwrite($fh, serialize($data)) === FALSE) {
+	e('cntsave', 'file', $fn); // TODO: error reporting for AJAX
+    }
+    if ($fh !== FALSE) {fclose($fh);}
+}
+
+
+/**
+ * Writes JS and CSS to <head>.
+ *
  * @global string $hjs
+ * @return void
  */
 function todo_hjs() {
     global $pth, $hjs, $plugin_cf, $plugin_tx;
@@ -96,19 +140,13 @@ function todo_hjs() {
 }
 
 
-function todo_state_select() {
-    global $plugin_tx;
-    
-    $ptx = $plugin_tx['todo'];
-    $o = '<select id="todo_state" name="todo_state">';
-    foreach (array('idea', 'todo', 'inprogress', 'done') as $state) {
-	$o .= '<option value="'.$state.'">'.$ptx['state_'.$state].'</option>';
-    }
-    $o .= '</select>';
-    return $o;
-}
-
-
+/**
+ * Returns a single record in JSON format.
+ *
+ * @param string $name  The name of the TODO list.
+ * @param array $rec
+ * @return string
+ */
 function todo_json_record($name, $rec) {
     global $plugin_tx;
     
@@ -137,16 +175,30 @@ function todo_json_record($name, $rec) {
 }
 
 
-function todo_sorted($name) {
+/**
+ * Returns the sorted TODO list.
+ *
+ * @param array $data  The TODO list.
+ * @return array
+ */
+function todo_sorted($data) {
     $fld = $_GET['sortname'];
-    $data = todo_data($name);
     uasort($data, create_function('$a, $b', "return strcmp(\$a['$fld'], \$b['$fld']);"));
-    if ($_GET['sortorder'] == 'notes') {$data = array_reverse($data);}
+    if ($_GET['sortorder'] == 'desc') {$data = array_reverse($data);}
     return $data;
 }
 
-function todo_json($name) {
-    $data = todo_data($name);
+
+/**
+ * Returns the requested records in JSON format.
+ *
+ * @param string name  The name of the TODO list.
+ * @return string
+ */
+function todo_list($name) {
+    todo_lock($name, LOCK_SH);
+    $data = todo_read_data($name);
+    todo_lock($name, LOCK_UN);
     $page = $_GET['page'];
     $rp = $_GET['rp'];
     $start = ($page - 1) * $rp;
@@ -156,7 +208,7 @@ function todo_json($name) {
 	$data = array_filter($data, create_function('$x', "return strpos(\$x['$qtype'], '$query') !== FALSE;"));
     }
     $total = count($data);
-    $data = todo_sorted($name);
+    $data = todo_sorted($data);
     $data = array_slice($data, $start, $rp);
     $o = '{"page": '.$page.', "total": '.$total.', "rows": [';
     $first = key($data);
@@ -171,15 +223,30 @@ function todo_json($name) {
 }
 
 
+/**
+ * Returns the requested record in JSON format.
+ *
+ * @param string $name  The name of the TODO list.
+ * @return string
+ */
 function todo_get($name) {
-    $data = todo_data($name);
+    todo_lock($name, LOCK_SH);
+    $data = todo_read_data($name);
+    todo_lock($name, LOCK_UN);
     $id = $_GET['todo_id'];
     return todo_json_record($name, $data[$id]);
 }
 
 
+/**
+ * Adds the posted task to the TODO list.
+ *
+ * @param string name  The name of the TODO list.
+ * @return void
+ */
 function todo_post($name) {
-    $data = todo_data($name);
+    todo_lock($name, LOCK_EX);
+    $data = todo_read_data($name);
     $rec = array();
     foreach (array('task', 'link', 'notes', 'resp', 'state', 'date') as $fld) {
 	$rec[$fld] = stsl($_POST['todo_'.$fld]);
@@ -191,76 +258,152 @@ function todo_post($name) {
     }
     $id = isset($_GET['todo_id']) ? $_GET['todo_id'] : uniqid();
     $data[$id] = $rec;
-    echo print_r($rec);
-    todo_data($name, $data);
+    todo_write_data($name, $data);
+    todo_lock($name, LOCK_UN);
 }
 
 
+/**
+ * Deletes the requested records from the TODO list.
+ *
+ * @param string name  The name of the TODO list.
+ * @return void
+ */
 function todo_delete($name) {
-    $data = todo_data($name);
+    todo_lock($name, LOCK_EX);
+    $data = todo_read_data($name);
     foreach ($_POST['todo_ids'] as $id) {
 	unset($data[$id]);
     }
-    todo_data($name, $data);    
+    todo_write_data($name, $data);
+    todo_lock($name, LOCK_UN);
 }
 
 
+/**
+ * Moves the requested records from to another TODO list.
+ *
+ * @param string name  The name of the source TODO list.
+ * @return void
+ */
 function todo_move($name) {
     $dname = stsl($_POST['todo_dest']);
-    $src = todo_data($name);
-    $dst = todo_data($dname);
+    todo_lock($name, LOCK_EX);
+    $src = todo_read_data($name);
+    todo_lock($dname, LOCK_EX);
+    $dst = todo_read_data($dname);
     foreach ($_POST['todo_ids'] as $id) {
 	$dst[$id] = $src[$id];
 	unset($src[$id]);
     }
-    todo_data($dname, $dst);
-    todo_data($name, $src);
+    todo_write_data($dname, $dst);
+    todo_lock($dname, LOCK_UN);
+    todo_write_data($name, $src);
+    todo_lock($name, LOCK_UN);
 }
 
 
+/**
+ * Returns the state selectbox.
+ *
+ * @return string  The (X)HTML.
+ */
+function todo_state_select() {
+    global $plugin_tx;
+    
+    $ptx = $plugin_tx['todo'];
+    $o = '<select id="todo_state" name="todo_state">';
+    foreach (array('idea', 'todo', 'inprogress', 'done') as $state) {
+	$o .= '<option value="'.$state.'">'.$ptx['state_'.$state].'</option>';
+    }
+    $o .= '</select>';
+    return $o;
+}
+
+
+/**
+ * Returns the "edit" dialog.
+ *
+ * @return string  The (X)HTML.
+ */
+function todo_edit_dlg() {
+    global $plugin_tx;
+    
+    $ptx = $plugin_tx['todo'];
+    return '<form id="todo_edit">'
+	    .'<label for="todo_task" class="todo_label">'.$ptx['js_task'].'</label>'
+	    .tag('input type="text" id="todo_task" name="todo_task"').tag('br')
+	    .'<label for="todo_link" class="todo_label">'.$ptx['js_link'].'</label>'
+	    .tag('input type="text" id="todo_link" name="todo_link"').tag('br')
+	    .'<label for="todo_notes" class="todo_label">'.$ptx['js_notes'].'</label>'
+	    .'<textarea id="todo_notes" name="todo_notes" cols="80" rows="5">'.'</textarea>'.tag('br')
+	    .'<label for="todo_resp" class="todo_label">'.$ptx['js_responsible'].'</label>'
+	    .tag('input type="text" id="todo_resp" name="todo_resp"').tag('br')
+	    .'<label for="todo_state" class="todo_label">'.$ptx['js_state'].'</label>'
+	    .todo_state_select().tag('br')
+	    .'<label for="todo_date" class="todo_label">'.$ptx['js_date'].'</label>'
+	    .tag('input type="text" name="todo_date"').tag('br')
+	    .'</form>';
+}
+
+/**
+ * Returns the "move" dialog.
+ *
+ * @return string  The (X)HTML.
+ */
 function todo_move_dlg() {
+    global $plugin_tx;
+    
+    $ptx = $plugin_tx['todo'];
     $todos = glob(todo_data_folder().'*.dat');
     $todos = array_map(create_function('$x', 'return basename($x, \'.dat\');'), $todos);
-    $o = '<form id="todo_move">'
-	    .'<select>';
+    $o = '<form id="todo_move" title="'.$ptx['move_title'].'">'
+	    .'<label for="todo_lists" class="todo_label">'.$ptx['move_destination'].'</label>'
+	    .'<select id="todo_lists">';
     foreach ($todos as $todo) {
-	$o .= '<option>'.$todo.'</option>';
+	$o .= '<option value="'.$todo.'">'.$todo.'</option>';
     }
     $o .= '</select>'
 	    .'</form>';
     return $o;
 }
 
+
+/**
+ * The main function. Returns the grid widget,
+ * and dispatches on all following AJAX requests.
+ *
+ * @access public
+ * @param string $name  The name of the TODO list.
+ * @return mixed
+ */
 function todo($name) {
-    global $hjs, $su;
+    global $hjs, $su, $e, $plugin_tx;
+    static $again = FALSE;
+    
+    $ptx = $plugin_tx['todo'];
+    if (!preg_match('/^[a-z0-9\-]+$/u', $name)) {
+	$e .= '<li><b>'.$ptx['msg_invalid_name'].'</b>'.tag('br').$name.'</li>'."\n";
+	return FALSE;
+    }
     
     if (isset($_GET['todo_name']) && $_GET['todo_name'] == $name) {
 	switch ($_GET['todo_act']) {
-	    case 'list': echo todo_json($name); exit;
+	    case 'list': echo todo_list($name); exit;
 	    case 'get': echo todo_get($name); exit;
 	    case 'post': todo_post($name); exit;
 	    case 'delete': echo todo_delete($name); exit;
 	    case 'move': echo todo_move($name); exit;
 	}
     }
-    todo_hjs();
-    $o = '<table id="todo_grid_'.$name.'" class="todo_grid"></table>';
-    $o .= '<form id="todo_edit">'
-	    .'<label for="todo_task" class="todo_label">Name</label>'
-	    .tag('input type="text" id="todo_task" name="todo_task"').tag('br')
-	    .'<label for="todo_link" class="todo_label">Link</label>'
-	    .tag('input type="text" id="todo_link" name="todo_link"').tag('br')
-	    .'<label for="todo_notes" class="todo_label">Notes</label>'
-	    .'<textarea id="todo_notes" name="todo_notes" cols="80" rows="5">'.'</textarea>'.tag('br')
-	    .'<label for="todo_resp" class="todo_label">Respons.</label>'
-	    .tag('input type="text" id="todo_resp" name="todo_resp"').tag('br')
-	    .'<label for="todo_state" class="todo_label">State</label>'
-	    .todo_state_select().tag('br')
-	    .'<label for="todo_date" class="todo_label">Date</label>'
-	    .tag('input type="text" name="todo_date"').tag('br')
-	    //.tag('input type="submit"')
-	    .'</form>';
-    $o .= todo_move_dlg();
+    
+    $o = '';
+    if (!$again) {
+	todo_hjs();
+	$o .= todo_edit_dlg().todo_move_dlg();
+	$again = TRUE;
+    }
+    $o .= '<table id="todo_grid_'.$name.'" class="todo_grid"></table>';
     $hjs .= '<script type="text/javascript">/* <![CDATA[ */'
 	    ."jQuery(function() {Todo.init('$su', '$name')})"
 	    .'/* ]]> */</script>';

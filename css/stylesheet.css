@@ -5,10 +5,10 @@ span.todo_btn_move {background: url(../images/move.png) no-repeat center left}
 
 table.todo_grid td[abbr='notes'] {white-space: normal !important}
 
+/* "edit" and "move" dialog */
 label.todo_label {float:left; width: 100px}
-#todo_edit input, #todo_edit textarea, #todo_edit select {float: left; width: 400px; padding: 0; margin: 0; border: 1px solid #888; margin-bottom: 0.5em}
-#todo_edit br {clear: both}
-div.todo_clear {clear: both}
+#todo_edit input, #todo_edit textarea, #todo_edit select, #todo_move select {float: left; width: 400px; padding: 0; margin: 0; border: 1px solid #888; margin-bottom: 0.5em}
+#todo_edit br, #todo_move br {clear: both}
 
 /* back-end */
 img.todo_plugin_icon {display: block; float: left; margin: 0 20px 10px 0}

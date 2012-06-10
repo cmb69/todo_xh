@@ -21,7 +21,7 @@ $plugin_tx['todo']['js_outof']="of";
 $plugin_tx['todo']['js_findtext']="Find";
 $plugin_tx['todo']['js_procmsg']="Processing, please wait ...";
 $plugin_tx['todo']['js_nomsg']="No items";
-$plugin_tx['todo']['js_confirm_delete']="The selected entries will be deleted!";
+$plugin_tx['todo']['js_confirm_delete']="The selected items will be deleted!";
 
 $plugin_tx['todo']['state_idea']="idea";
 $plugin_tx['todo']['state_todo']="to do";
@@ -29,6 +29,12 @@ $plugin_tx['todo']['state_inprogress']="in progress";
 $plugin_tx['todo']['state_done']="done";
 
 $plugin_tx['todo']['link_text']="Discussion";
+
+$plugin_tx['todo']['move_title']="Move selected items to another TODO list";
+$plugin_tx['todo']['move_destination']="Destination";
+
+$plugin_tx['todo']['msg_invalid_name']="Invalid TODO list name (may contain a-z, 0-9 and - only):";
+$plugin_tx['todo']['msg_powered_by']="Powered by <a href=\"http://3-magi.net/?CMSimple_XH/Todo_XH\">Todo_XH</a>";
 
 $plugin_tx['todo']['syscheck_title']="System check";
 $plugin_tx['todo']['syscheck_phpversion']="PHP version &ge; %s";
