@@ -94,7 +94,7 @@ function todo_json_record($name, $rec) {
     foreach (array('task', 'link', 'notes', 'resp', 'state', 'date') as $fld) {
 	if ($fld != 'task') {$o .= ', ';}
 	$val = $_GET['todo_act'] == 'list'
-		? htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8')
+		? preg_replace('/\r\n|\n|\r/u', tag('br'), htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8'))
 		: addcslashes($rec[$fld], "\0..\37\"\\");
 	if ($fld == 'link' && $_GET['todo_act'] == 'list') {
 	    $val = empty($val) ? '' : '<a href=\"'.$val.'\">Discussion</a>';
