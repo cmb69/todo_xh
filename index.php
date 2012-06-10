@@ -404,7 +404,8 @@ function todo($name) {
 	$again = TRUE;
     }
     $o .= '<table id="todo_grid_'.$name.'" class="todo_grid"></table>'
-	    .'<noscript class="cmsimplecore_warning">'.$ptx['msg_no_js'].'</noscript>';
+	    .'<noscript class="cmsimplecore_warning">'.$ptx['msg_no_js'].'</noscript>'
+	    .'<div class="todo_powered_by">'.$ptx['msg_powered_by'].'</div>';
     $hjs .= '<script type="text/javascript">/* <![CDATA[ */'
 	    ."jQuery(function() {Todo.init('$su', '$name')})"
 	    .'/* ]]> */</script>';

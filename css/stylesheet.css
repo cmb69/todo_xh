@@ -10,6 +10,9 @@ label.todo_label {float:left; width: 100px}
 #todo_edit input, #todo_edit textarea, #todo_edit select, #todo_move select {float: left; width: 400px; padding: 0; margin: 0; border: 1px solid #888; margin-bottom: 0.5em}
 #todo_edit br, #todo_move br {clear: both}
 
+/* powered by link; do not make it invisible via CSS; just empty the */
+div.todo_powered_by {font-size: 85%; text-align: center; margin: 1em 0}
+
 /* back-end */
 img.todo_plugin_icon {display: block; float: left; margin: 0 20px 10px 0}
 p.todo_license {clear: both; text-align: justify}
