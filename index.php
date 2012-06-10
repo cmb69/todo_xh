@@ -97,7 +97,7 @@ function todo_json_record($name, $rec) {
 		? htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8')
 		: addcslashes($rec[$fld], "\0..\37\"\\");
 	if ($fld == 'link' && $_GET['todo_act'] == 'list') {
-	    $val = '<a href=\"'.$val.'\">Discussion</a>';
+	    $val = empty($val) ? '' : '<a href=\"'.$val.'\">Discussion</a>';
 	} elseif ($fld == 'state') {
 	    if ($_GET['todo_act'] == 'list') {
 		$colors = array('idea' => 'black', 'todo' => 'green', 'inprogress' => 'red', 'done' => 'orange');
