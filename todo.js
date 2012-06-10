@@ -15,6 +15,7 @@
             }))
         },
     
+    
         add: function(page, name) {
             var dlg = $('#todo_edit');
             dlg.dialog('option', 'buttons', [{
@@ -34,6 +35,7 @@
             }
             dlg.dialog('open')
         },
+        
         
         edit: function(page, name) {
             var dlg = $('#todo_edit');
@@ -63,12 +65,14 @@
             });
         },
         
+        
         post: function(page, name, id) {
             var dlg = $('#todo_edit');
             $.post('?' + page + '&todo_name=' + name + '&todo_act=post' + (id != null ? '&todo_id=' + id : ''),
                     $('#todo_edit').serialize(),
                     function() {$('#todo_grid_' + name).flexReload()});
         },
+        
         
         remove: function(page, name) {
             if (Todo.sel(name).length < 1 || !confirm(Todo.TX.CONFIRM_DELETE)) {return}
@@ -98,6 +102,7 @@
             dlg.find('#todo_lists option[value="' + name + '"]').remove();
             dlg.dialog('open')
         },
+        
         
         init: function(page, name) {
             var btns = !Todo.isMember ? null : [
@@ -134,11 +139,12 @@
                 findtext: Todo.TX.FINDTEXT,
                 procmsg: Todo.TX.PROCMSG,
                 nomsg: Todo.TX.NOMSG,
-                onError: function() {$(this).flexAddData({rows:[],page:1,total:0});} // TODO
+                onError: function() {alert('Unknown error!')} // TODO
             })
         }
     }
 
+    
     $(function() {
         var dlg = $('#todo_edit');
         dlg.dialog({autoOpen: false, modal: true, width: 536});

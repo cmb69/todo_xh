@@ -1,16 +1,20 @@
+/* the grid */
+table.todo_grid td[abbr='notes'] {white-space: normal !important}
+
+/* the grid buttons */
 span.todo_btn_add {background: url(../images/add.png) no-repeat center left}
 span.todo_btn_edit {background: url(../images/edit.png) no-repeat center left}
 span.todo_btn_remove {background: url(../images/delete.png) no-repeat center left}
 span.todo_btn_move {background: url(../images/move.png) no-repeat center left}
 
-table.todo_grid td[abbr='notes'] {white-space: normal !important}
-
 /* "edit" and "move" dialog */
 label.todo_label {float:left; width: 100px}
-#todo_edit input, #todo_edit textarea, #todo_edit select, #todo_move select {float: left; width: 400px; padding: 0; margin: 0; border: 1px solid #888; margin-bottom: 0.5em}
+#todo_edit input, #todo_edit textarea, #todo_edit select, #todo_move select {
+    float: left; width: 400px; padding: 0; margin: 0; border: 1px solid #888; margin-bottom: 0.5em
+}
 #todo_edit br, #todo_move br {clear: both}
 
-/* powered by link; do not make it invisible via CSS; just empty the */
+/* powered by link; do not make it invisible via CSS; instead remove it in "Plugin Language" */
 div.todo_powered_by {font-size: 85%; text-align: center; margin: 1em 0}
 
 /* back-end */

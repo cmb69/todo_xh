@@ -57,7 +57,7 @@ function todo_system_check() { // RELEASE-TODO
 	    .(version_compare(PHP_VERSION, TODO_PHP_VERSION) >= 0 ? $ok : $fail)
 	    .'&nbsp;&nbsp;'.sprintf($ptx['syscheck_phpversion'], TODO_PHP_VERSION)
 	    .tag('br')."\n";
-    foreach (array() as $ext) {
+    foreach (array('date', 'pcre', 'session') as $ext) {
 	$o .= (extension_loaded($ext) ? $ok : $fail)
 		.'&nbsp;&nbsp;'.sprintf($ptx['syscheck_extension'], $ext).tag('br')."\n";
     }

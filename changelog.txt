@@ -1,5 +1,13 @@
-Version 1alpha1 - internally released TODO
+Version 1alpha1 - internally released 2012-06-10
+cmb	fixed bug: empty link field was displayed (reported by svasti)
+cmb	fixed bug: newlines were not properly escaped in JSON response
+cmb	fixed bug: list refresh was done asynchronously
+cmb	added copyright and license information
+cmb	added basic back-end
 cmb	added i18n
+cmb	added config options folder_data and col_widths
+cmb	added file locking and some error handling
+cmb	cleaned up code
 
 Version 1dev1 - internally released 2012-06-06
 cmb	initial release
