@@ -51,6 +51,7 @@ function todo_data($name, $ndata = NULL) {
 function todo_hjs() {
     global $pth, $hjs, $plugin_cf, $plugin_tx;
     
+    $pcf = $plugin_cf['todo'];
     include_once $pth['folder']['plugins'].'jquery/jquery.inc.php';
     include_jquery();
     include_jqueryui();
@@ -68,6 +69,7 @@ function todo_hjs() {
 	}
     }
     $hjs .= '}'."\n"
+	    .'Todo.COLS = ['.$pcf['col_widths'].'];'
 	    .'/* ]]> */</script>'."\n";
 }
 

@@ -107,12 +107,12 @@
                 method: 'GET',
                 dataType: 'json',
                 colModel: [
-                    {display: Todo.TX.TASK, name: 'task', width: 200, sortable: true, align: 'left'},
-                    {display: Todo.TX.LINK, name: 'link', width: 100, sortable: true, align: 'left'},
-                    {display: Todo.TX.NOTES, name: 'notes', width: 400, sortable: true, align: 'left'},
-                    {display: Todo.TX.RESPONSIBLE, name: 'resp', width: 100, sortable: true, align: 'left'},
-                    {display: Todo.TX.STATE, name: 'state', width: 100, sortable: true, align: 'left'},
-                    {display: Todo.TX.DATE, name: 'date', width: 100, sortable: true, align: 'left'}
+                    {display: Todo.TX.TASK, name: 'task', width: Todo.COLS[0], sortable: true, align: 'left'},
+                    {display: Todo.TX.LINK, name: 'link', width: Todo.COLS[1], sortable: true, align: 'left'},
+                    {display: Todo.TX.NOTES, name: 'notes', width: Todo.COLS[2], sortable: true, align: 'left'},
+                    {display: Todo.TX.RESPONSIBLE, name: 'resp', width: Todo.COLS[3], sortable: true, align: 'left'},
+                    {display: Todo.TX.STATE, name: 'state', width: Todo.COLS[4], sortable: true, align: 'left'},
+                    {display: Todo.TX.DATE, name: 'date', width: Todo.COLS[5], sortable: true, align: 'left'}
                 ],
                 buttons: btns,
                 searchitems: [
