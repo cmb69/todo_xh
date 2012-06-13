@@ -13,7 +13,7 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
 }
 
 
-define('TODO_VERSION', '1alpha1');
+define('TODO_VERSION', '1alpha2');
 
 
 /**
@@ -61,7 +61,7 @@ function todo_data_folder() {
  */
 function todo_lock($name, $op) {
     static $fh = array();
-    
+
     $fn = todo_data_folder().$name.'.lck';
     switch ($op) {
 	case LOCK_SH: case LOCK_EX:
@@ -116,7 +116,7 @@ function todo_write_data($name, $data) {
  */
 function todo_hjs() {
     global $pth, $hjs, $plugin_cf, $plugin_tx;
-    
+
     $pcf = $plugin_cf['todo'];
     include_once $pth['folder']['plugins'].'jquery/jquery.inc.php';
     include_jquery();
@@ -149,7 +149,7 @@ function todo_hjs() {
  */
 function todo_json_record($name, $rec) {
     global $plugin_tx;
-    
+
     $ptx = $plugin_tx['todo'];
     $o = '{';
     foreach (array('task', 'link', 'notes', 'resp', 'state', 'date') as $fld) {
@@ -161,8 +161,7 @@ function todo_json_record($name, $rec) {
 	    $val = empty($val) ? '' : '<a href=\"'.$val.'\">'.$ptx['link_text'].'</a>';
 	} elseif ($fld == 'state') {
 	    if ($_GET['todo_act'] == 'list') {
-		$colors = array('idea' => 'black', 'todo' => 'green', 'inprogress' => 'red', 'done' => 'orange');
-		$val = '<span style=\"color: '.$colors[$val].'\">'
+		$val = '<span class=\"todo_state_'.$val.'\">'
 			.htmlspecialchars($ptx['state_'.$val], ENT_QUOTES, 'UTF-8').'</span>';
 	    }
 	} elseif ($fld == 'date') {
@@ -310,7 +309,7 @@ function todo_move($name) {
  */
 function todo_state_select() {
     global $plugin_tx;
-    
+
     $ptx = $plugin_tx['todo'];
     $o = '<select id="todo_state" name="todo_state">';
     foreach (array('idea', 'todo', 'inprogress', 'done') as $state) {
@@ -328,7 +327,7 @@ function todo_state_select() {
  */
 function todo_edit_dlg() {
     global $plugin_tx;
-    
+
     $ptx = $plugin_tx['todo'];
     return '<form id="todo_edit" style="display: none">'
 	    .'<label for="todo_task" class="todo_label">'.$ptx['js_task'].'</label>'
@@ -353,7 +352,7 @@ function todo_edit_dlg() {
  */
 function todo_move_dlg() {
     global $plugin_tx;
-    
+
     $ptx = $plugin_tx['todo'];
     $todos = glob(todo_data_folder().'*.dat');
     $todos = array_map(create_function('$x', 'return basename($x, \'.dat\');'), $todos);
@@ -380,13 +379,13 @@ function todo_move_dlg() {
 function todo($name) {
     global $hjs, $su, $e, $plugin_tx;
     static $again = FALSE;
-    
+
     $ptx = $plugin_tx['todo'];
     if (!preg_match('/^[a-z0-9\-]+$/u', $name)) {
 	$e .= '<li><b>'.$ptx['msg_invalid_name'].'</b>'.tag('br').$name.'</li>'."\n";
 	return FALSE;
     }
-    
+
     if (isset($_GET['todo_name']) && $_GET['todo_name'] == $name) {
 	switch ($_GET['todo_act']) {
 	    case 'list': echo todo_list($name); exit;
@@ -396,7 +395,7 @@ function todo($name) {
 	    case 'move': echo todo_move($name); exit;
 	}
     }
-    
+
     $o = '';
     if (!$again) {
 	todo_hjs();

@@ -1,3 +1,6 @@
+Version 1alpha2 - internally released TODO
+cmb	changed: states have classes instead of fixed colors (inspired by svasti)
+
 Version 1alpha1 - internally released 2012-06-10
 cmb	fixed bug: empty link field was displayed (reported by svasti)
 cmb	fixed bug: newlines were not properly escaped in JSON response
