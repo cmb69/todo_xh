@@ -17,13 +17,15 @@ define('TODO_VERSION', '1alpha2');
 
 
 /**
- * Returns whether a member is logged in (Memberpages or Register)
+ * Returns the currently logged in user (Memberpages or Register);
+ * FALSE, if the visitor is not logged in.
  *
- * @return bool
+ * @return string
  */
-function todo_is_member() {
+function todo_member() {
     if (session_id() == '') {session_start();}
-    return isset($_SESSION['Name']) || isset($_SESSION['username']);
+    return isset($_SESSION['Name']) ? $_SESSION['Name']
+	    : (isset($_SESSION['username']) ? $_SESSION['username'] : FALSE);
 }
 
 
@@ -125,7 +127,7 @@ function todo_hjs() {
     include_jqueryplugin('flexigrid', $pth['folder']['plugins'].'todo/flexigrid/js/flexigrid.pack.js');
     $hjs .= '<script type="text/javascript" src="'.$pth['folder']['plugins'].'todo/todo.js"></script>'."\n";
     $hjs .= '<script type="text/javascript">/* <![CDATA[ */'."\n"
-	    .'Todo.isMember = '.(todo_is_member() ? 'true' : 'false').';'."\n"
+	    .'Todo.isMember = '.(todo_member() ? 'true' : 'false').';'."\n"
 	    .'Todo.TX = {';
     $first = TRUE;
     foreach ($plugin_tx['todo'] as $key => $val) {
@@ -141,6 +143,21 @@ function todo_hjs() {
 
 
 /**
+ * Returns the voting result for the list view.
+ *
+ * @return string  The (X)HTML.
+ */
+function todo_voting_result($voting) {
+    $votes = array_count_values($voting);
+    $res = array();
+    foreach (array('now', 'later', 'never') as $opt) {
+	$res[$opt] = isset($votes[$opt]) ? $votes[$opt] : 0;
+    }
+    return implode(' : ', $res);
+}
+
+
+/**
  * Returns a single record in JSON format.
  *
  * @param string $name  The name of the TODO list.
@@ -152,11 +169,20 @@ function todo_json_record($name, $rec) {
 
     $ptx = $plugin_tx['todo'];
     $o = '{';
-    foreach (array('task', 'link', 'notes', 'resp', 'state', 'date') as $fld) {
+    foreach (array('task', 'link', 'notes', 'resp', 'state', 'date', 'votes') as $fld) {
 	if ($fld != 'task') {$o .= ', ';}
-	$val = $_GET['todo_act'] == 'list'
-		? preg_replace('/\r\n|\n|\r/u', tag('br'), htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8'))
-		: addcslashes($rec[$fld], "\0..\37\"\\");
+	if ($fld != 'votes') {
+	    $val = $_GET['todo_act'] == 'list'
+		    ? preg_replace('/\r\n|\n|\r/u', tag('br'), htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8'))
+		    : addcslashes($rec[$fld], "\0..\37\"\\");
+	} else {
+	    if ($_GET['todo_act'] == 'list') {
+		$val = todo_voting_result($rec[$fld]);
+	    } else {
+		$val = addcslashes($rec[$fld][todo_member()], "\0..\37\"\\");
+		$fld = 'vote';
+	    }
+	}
 	if ($fld == 'link' && $_GET['todo_act'] == 'list') {
 	    $val = empty($val) ? '' : '<a href=\"'.$val.'\">'.$ptx['link_text'].'</a>';
 	} elseif ($fld == 'state') {
@@ -246,16 +272,25 @@ function todo_get($name) {
 function todo_post($name) {
     todo_lock($name, LOCK_EX);
     $data = todo_read_data($name);
-    $rec = array();
-    foreach (array('task', 'link', 'notes', 'resp', 'state', 'date') as $fld) {
-	$rec[$fld] = stsl($_POST['todo_'.$fld]);
+    if (isset($_GET['todo_id'])) {
+	$id = $_GET['todo_id'];
+	$rec = $data[$id];
+    } else {
+	$id = uniqid();
+	$rec = array('votes' => array());
+    }
+    foreach (array('task', 'link', 'notes', 'resp', 'state', 'date', 'votes') as $fld) {
 	switch ($fld) {
 	    case 'date':
-		$rec[$fld] = empty($rec[$fld]) ? NULL : strtotime(stsl($rec[$fld]));
+		$rec[$fld] = empty($_POST['todo_date']) ? NULL : strtotime($_POST['todo_date']);
 		break;
+	    case 'votes':
+		$rec[$fld][todo_member()] = $_POST['todo_vote'];
+		break;
+	    default:
+		$rec[$fld] = stsl($_POST['todo_'.$fld]);
 	}
     }
-    $id = isset($_GET['todo_id']) ? $_GET['todo_id'] : uniqid();
     $data[$id] = $rec;
     todo_write_data($name, $data);
     todo_lock($name, LOCK_UN);
@@ -303,6 +338,30 @@ function todo_move($name) {
 
 
 /**
+ * Returns the detailed voting results.
+ *
+ * @param string $name  The name of the TODO list.
+ * @return string  The (X)HTML.
+ */
+function todo_voting($name) {
+    global $plugin_tx;
+
+    $ptx = $plugin_tx['todo'];
+    todo_lock($name, LOCK_SH);
+    $data = todo_read_data($name);
+    todo_lock($name, LOCK_UN);
+    $id = $_GET['todo_id'];
+    $votes = $data[$id]['votes'];
+    $o = '<table>';
+    foreach ($votes as $user => $vote) {
+	$o .= '<tr>'.'<td>'.$user.'</td>'.'<td>'.$ptx['vote_'.$vote].'</td>'.'</tr>';
+    }
+    $o .= '</table>';
+    return $o;
+}
+
+
+/**
  * Returns the state selectbox.
  *
  * @return string  The (X)HTML.
@@ -314,6 +373,24 @@ function todo_state_select() {
     $o = '<select id="todo_state" name="todo_state">';
     foreach (array('idea', 'todo', 'inprogress', 'done') as $state) {
 	$o .= '<option value="'.$state.'">'.$ptx['state_'.$state].'</option>';
+    }
+    $o .= '</select>';
+    return $o;
+}
+
+
+/**
+ * Returns the vote selectbox.
+ *
+ * @return string  The (X)HTML.
+ */
+function todo_vote_select() {
+    global $plugin_tx;
+
+    $ptx = $plugin_tx['todo'];
+    $o = '<select id="todo_vote" name="todo_vote">';
+    foreach (array('', 'now', 'later', 'never') as $opt) {
+	$o .= '<option value="'.$opt.'">'.$ptx['vote_'.$opt].'</option>';
     }
     $o .= '</select>';
     return $o;
@@ -342,6 +419,8 @@ function todo_edit_dlg() {
 	    .todo_state_select().tag('br')
 	    .'<label for="todo_date" class="todo_label">'.$ptx['js_date'].'</label>'
 	    .tag('input type="text" name="todo_date"').tag('br')
+	    .'<label for="todo_vote" class="todo_label">'.$ptx['js_vote'].'</label>'
+	    .todo_vote_select().tag('br')
 	    .'</form>';
 }
 
@@ -364,6 +443,21 @@ function todo_move_dlg() {
     }
     $o .= '</select>'
 	    .'</form>';
+    return $o;
+}
+
+
+/**
+ * Returns the "voting" dialog.
+ *
+ * @return string  The (X)HTML.
+ */
+function todo_voting_dlg() {
+    global $plugin_tx;
+
+    $ptx = $plugin_tx['todo'];
+    $o = '<div id="todo_voting" title="'.$ptx['js_voting'].'">'
+	    .'</div>';
     return $o;
 }
 
@@ -393,13 +487,14 @@ function todo($name) {
 	    case 'post': todo_post($name); exit;
 	    case 'delete': echo todo_delete($name); exit;
 	    case 'move': echo todo_move($name); exit;
+	    case 'voting': echo todo_voting($name); exit;
 	}
     }
 
     $o = '';
     if (!$again) {
 	todo_hjs();
-	$o .= todo_edit_dlg().todo_move_dlg();
+	$o .= todo_edit_dlg().todo_move_dlg().todo_voting_dlg();
 	$again = TRUE;
     }
     $o .= '<table id="todo_grid_'.$name.'" class="todo_grid"></table>'

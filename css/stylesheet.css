@@ -13,6 +13,7 @@ span.todo_btn_add {background: url(../images/add.png) no-repeat center left}
 span.todo_btn_edit {background: url(../images/edit.png) no-repeat center left}
 span.todo_btn_remove {background: url(../images/delete.png) no-repeat center left}
 span.todo_btn_move {background: url(../images/move.png) no-repeat center left}
+span.todo_btn_voting {background: url(../images/voting.png) no-repeat center left}
 
 /* "edit" and "move" dialog */
 label.todo_label {float:left; width: 100px}
@@ -20,6 +21,10 @@ label.todo_label {float:left; width: 100px}
     float: left; width: 400px; padding: 0; margin: 0; border: 1px solid #888; margin-bottom: 0.5em
 }
 #todo_edit br, #todo_move br {clear: both}
+
+/* the voting dialog */
+#todo_voting table {border-collapse: collapse}
+#todo_voting table td {border: 1px solid #888; padding: 0.2em}
 
 /* powered by link; do not make it invisible via CSS; instead remove it in "Plugin Language" */
 div.todo_powered_by {font-size: 85%; text-align: center; margin: 1em 0}
