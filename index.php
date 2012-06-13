@@ -13,7 +13,19 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
 }
 
 
-define('TODO_VERSION', '1alpha2');
+define('TODO_VERSION', '1alpha3');
+
+
+/**
+ * Downward compatibility.
+ */
+if (!function_exists('mb_stripos')) {
+    function mb_stripos($haystack, $needle, $offset = 0, $encoding = NULL) {
+	if (!isset($encoding)) {$encoding = mb_internal_encoding();}
+	return mb_stripos(mb_strtolower($haystack, $encoding),
+		mb_strtolower($needle, $encoding), $offset, $encoding);
+    }
+}
 
 
 /**
@@ -208,7 +220,10 @@ function todo_json_record($name, $rec) {
  */
 function todo_sorted($data) {
     $fld = $_GET['sortname'];
-    uasort($data, create_function('$a, $b', "return strcmp(\$a['$fld'], \$b['$fld']);"));
+    // FIXME: sort locale aware (but see http://sgehrig.wordpress.com/2008/12/08/update-on-strcoll-utf-8-issue/)
+    // FIXME: use efficent sorting
+    uasort($data, create_function('$a, $b',
+	    "return strcmp(mb_strtolower(\$a['$fld']), mb_strtolower(\$b['$fld']));"));
     if ($_GET['sortorder'] == 'desc') {$data = array_reverse($data);}
     return $data;
 }
@@ -230,7 +245,8 @@ function todo_list($name) {
     $qtype = $_GET['qtype'];
     $query = stsl($_GET['query']);
     if (!empty($query)) {
-	$data = array_filter($data, create_function('$x', "return strpos(\$x['$qtype'], '$query') !== FALSE;"));
+	$data = array_filter($data, create_function('$x',
+		"return mb_stripos(\$x['$qtype'], '$query', 0, 'UTF-8') !== FALSE;"));
     }
     $total = count($data);
     $data = todo_sorted($data);
