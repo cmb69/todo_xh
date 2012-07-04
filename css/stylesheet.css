@@ -8,6 +8,9 @@ span.todo_state_todo {color: red}
 span.todo_state_inprogress {color: orange}
 span.todo_state_done {color: green}
 
+/* signal already voted */
+span.todo_voted {color: green}
+
 /* the grid buttons */
 span.todo_btn_add {background: url(../images/add.png) no-repeat center left}
 span.todo_btn_edit {background: url(../images/edit.png) no-repeat center left}

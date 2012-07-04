@@ -1,5 +1,6 @@
-Version 1alpha3 - released TODO
+Version 1alpha3 - internally released 2012-07-04
 cmb	made sorting and filtering case insensitive (but not yet locale aware)
+cmb	added: list view signals, if current user has already voted
 
 Version 1alpha2 - internally released 2012-06-13
 cmb	changed: states have classes instead of fixed colors (inspired by svasti)

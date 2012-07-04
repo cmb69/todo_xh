@@ -165,7 +165,9 @@ function todo_voting_result($voting) {
     foreach (array('now', 'later', 'never') as $opt) {
 	$res[$opt] = isset($votes[$opt]) ? $votes[$opt] : 0;
     }
-    return implode(' : ', $res);
+    $voted = !empty($voting[todo_member()]);
+    return ($voted ? '<span class=\"todo_voted\">' : '') . implode(' : ', $res)
+	. ($voted ? '</span>' : '');
 }
 
 
