@@ -79,6 +79,11 @@ function todo_system_check() { // RELEASE-TODO
 }
 
 
+/**
+ * Resets all votes and returns the main administration view.
+ *
+ * @return string  The (X)HTML.
+ */
 function Todo_resetVotes()
 {
     $name = $_GET['todo_name'];
@@ -93,6 +98,11 @@ function Todo_resetVotes()
 }
 
 
+/**
+ * Returns the main administration view.
+ *
+ * @return string  The (X)HTML.
+ */
 function Todo_adminMain()
 {
     global $plugin_tx;
@@ -114,6 +124,9 @@ function Todo_adminMain()
 }
 
 
+/*
+ * Handle the plugin administration
+ */
 if (isset($todo) && $todo == 'true') {
     $o .= print_plugin_admin('on');
     switch ($admin) {
