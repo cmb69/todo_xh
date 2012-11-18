@@ -13,7 +13,7 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
 }
 
 
-define('TODO_VERSION', '1alpha3');
+define('TODO_VERSION', '1alpha4');
 
 
 /**
@@ -79,6 +79,7 @@ function todo_lock($name, $op) {
     $fn = todo_data_folder().$name.'.lck';
     switch ($op) {
 	case LOCK_SH: case LOCK_EX:
+	    touch($fn);
 	    $fh[$name] = fopen($fn, 'r+b');
 	    flock($fh[$name], $op);
 	    break;

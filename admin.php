@@ -79,14 +79,58 @@ function todo_system_check() { // RELEASE-TODO
 }
 
 
+function Todo_resetVotes()
+{
+    $name = $_GET['todo_name'];
+    todo_lock($name, LOCK_EX);
+    $todos = todo_read_data($name);
+    foreach ($todos as $key => $todo) {
+	$todos[$key]['votes'] = array();
+    }
+    todo_write_data($name, $todos);
+    todo_lock($name, LOCK_UN);
+    return Todo_adminMain();
+}
+
+
+function Todo_adminMain()
+{
+    global $plugin_tx;
+    
+    $todos = glob(todo_data_folder() . '*.dat');
+    $o = '<div class="plugineditcaption">Todo</div>'
+	. '<ul>';
+    foreach ($todos as $todo) {
+	$name = basename($todo, '.dat');
+	$url = '?todo&amp;admin=plugin_main&amp;action=reset_votes&amp;todo_name='
+	    . $name;
+	$onclick = 'return confirm(\'' . $plugin_tx['todo']['confirm_reset'] . '\')';
+	$o .= '<li><a href="' . $url . '" onclick="' . $onclick . '">'
+	    . htmlspecialchars($name, ENT_COMPAT, 'UTF-8')
+	    . '</a></li>';
+    }
+    $o .= '</ul>';
+    return $o;
+}
+
+
 if (isset($todo) && $todo == 'true') {
-    $o .= print_plugin_admin('off');
+    $o .= print_plugin_admin('on');
     switch ($admin) {
-	case '':
-	    $o .= todo_version().tag('hr').todo_system_check();
+    case '':
+	$o .= todo_version().tag('hr').todo_system_check();
+	break;
+    case 'plugin_main':
+	switch ($action) {
+	case 'reset_votes':
+	    $o .= Todo_resetVotes();
 	    break;
 	default:
-	    $o .= plugin_admin_common($action, $admin, $plugin);
+	    $o .= Todo_adminMain();
+	}
+	break;
+    default:
+	$o .= plugin_admin_common($action, $admin, $plugin);
     }
 }
 

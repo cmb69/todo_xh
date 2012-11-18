@@ -30,6 +30,10 @@ $plugin_tx['todo']['vote_later']="Later";
 $plugin_tx['todo']['vote_never']="Never";
 $plugin_tx['todo']['vote_']="";
 
+$plugin_tx['todo']['confirm_reset']="All votes will be reset!";
+
+$plugin_tx['todo']['menu_main']="Reset Votes";
+
 $plugin_tx['todo']['state_idea']="idea";
 $plugin_tx['todo']['state_todo']="to do";
 $plugin_tx['todo']['state_inprogress']="in progress";
