@@ -1,3 +1,7 @@
+Version 1alpha5 - internally released 2013-09-17
+cmb     added ID column (default for sorting)
+cmb     removed powered by link
+
 Version 1alpha4 - internally released 2012-11-19
 cmb     implemented resetting of votes from back-end
 

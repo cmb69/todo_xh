@@ -3,7 +3,7 @@
 /**
  * Front-end of Todo_XH.
  *
- * Copyright (c) 2012 Christoph M. Becker (see license.txt)
+ * Copyright (c) 2012-2013 Christoph M. Becker (see license.txt)
  */
 
 
@@ -13,7 +13,7 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
 }
 
 
-define('TODO_VERSION', '1alpha4');
+define('TODO_VERSION', '1alpha5');
 
 
 /**
