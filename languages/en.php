@@ -1,5 +1,6 @@
 <?php
 
+$plugin_tx['todo']['js_id']="ID";
 $plugin_tx['todo']['js_task']="Task";
 $plugin_tx['todo']['js_link']="Link";
 $plugin_tx['todo']['js_notes']="Notes";

@@ -132,20 +132,21 @@
                 method: 'GET',
                 dataType: 'json',
                 colModel: [
-                    {display: Todo.TX.TASK, name: 'task', width: Todo.COLS[0], sortable: true, align: 'left'},
-                    {display: Todo.TX.LINK, name: 'link', width: Todo.COLS[1], sortable: true, align: 'left'},
-                    {display: Todo.TX.NOTES, name: 'notes', width: Todo.COLS[2], sortable: true, align: 'left'},
-                    {display: Todo.TX.RESPONSIBLE, name: 'resp', width: Todo.COLS[3], sortable: true, align: 'left'},
-                    {display: Todo.TX.STATE, name: 'state', width: Todo.COLS[4], sortable: true, align: 'left'},
-                    {display: Todo.TX.DATE, name: 'date', width: Todo.COLS[5], sortable: true, align: 'left'},
-                    {display: Todo.TX.VOTING, name: 'votes', width: Todo.COLS[6], sortable: false, align: 'left'}
+                    {display: Todo.TX.ID, name: 'id', width: Todo.COLS[0], sortable: true, align: 'left'},
+                    {display: Todo.TX.TASK, name: 'task', width: Todo.COLS[1], sortable: true, align: 'left'},
+                    {display: Todo.TX.LINK, name: 'link', width: Todo.COLS[2], sortable: true, align: 'left'},
+                    {display: Todo.TX.NOTES, name: 'notes', width: Todo.COLS[3], sortable: true, align: 'left'},
+                    {display: Todo.TX.RESPONSIBLE, name: 'resp', width: Todo.COLS[4], sortable: true, align: 'left'},
+                    {display: Todo.TX.STATE, name: 'state', width: Todo.COLS[5], sortable: true, align: 'left'},
+                    {display: Todo.TX.DATE, name: 'date', width: Todo.COLS[6], sortable: true, align: 'left'},
+                    {display: Todo.TX.VOTING, name: 'votes', width: Todo.COLS[7], sortable: false, align: 'left'}
                 ],
                 buttons: btns,
                 searchitems: [
-                    {display: Todo.TX.TASK, name: 'task'},
-                    {display: Todo.TX.NOTES, name: 'notes', isdefault: true}
+                    {display: Todo.TX.TASK, name: 'task', isdefault: true},
+                    {display: Todo.TX.NOTES, name: 'notes'}
                 ],
-                sortname: 'task',
+                sortname: 'id',
                 sortorder: 'asc',
                 usepager: true,
                 height: 'auto',

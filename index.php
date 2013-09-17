@@ -179,14 +179,16 @@ function todo_voting_result($voting) {
  * @param array $rec
  * @return string
  */
-function todo_json_record($name, $rec) {
+function todo_json_record($name, $rec, $id) {
     global $plugin_tx;
 
     $ptx = $plugin_tx['todo'];
     $o = '{';
-    foreach (array('task', 'link', 'notes', 'resp', 'state', 'date', 'votes') as $fld) {
-	if ($fld != 'task') {$o .= ', ';}
-	if ($fld != 'votes') {
+    foreach (array('id', 'task', 'link', 'notes', 'resp', 'state', 'date', 'votes') as $fld) {
+	if ($fld != 'id') {$o .= ', ';}
+	if ($fld == 'id') {
+	    $val = $id;
+	} elseif ($fld != 'votes') {
 	    $val = $_GET['todo_act'] == 'list'
 		    ? preg_replace('/\r\n|\n|\r/u', tag('br'), htmlspecialchars($rec[$fld], ENT_QUOTES, 'UTF-8'))
 		    : addcslashes($rec[$fld], "\0..\37\"\\");
@@ -225,8 +227,10 @@ function todo_sorted($data) {
     $fld = $_GET['sortname'];
     // FIXME: sort locale aware (but see http://sgehrig.wordpress.com/2008/12/08/update-on-strcoll-utf-8-issue/)
     // FIXME: use efficent sorting
-    uasort($data, create_function('$a, $b',
-	    "return strcmp(mb_strtolower(\$a['$fld']), mb_strtolower(\$b['$fld']));"));
+    if ($fld != 'id') {
+	uasort($data, create_function('$a, $b',
+		"return strcmp(mb_strtolower(\$a['$fld']), mb_strtolower(\$b['$fld']));"));
+    }
     if ($_GET['sortorder'] == 'desc') {$data = array_reverse($data);}
     return $data;
 }
@@ -259,7 +263,7 @@ function todo_list($name) {
     foreach ($data as $id => $rec) {
 	if ($id != $first) {$o .= ', ';}
 	$o.= '{"id": "'.$id.'", "cell": ';
-	$o .= todo_json_record($name, $rec);
+	$o .= todo_json_record($name, $rec, $id);
 	$o .= '}';
     }
     $o .= ']}';
@@ -278,7 +282,7 @@ function todo_get($name) {
     $data = todo_read_data($name);
     todo_lock($name, LOCK_UN);
     $id = $_GET['todo_id'];
-    return todo_json_record($name, $data[$id]);
+    return todo_json_record($name, $data[$id], $id);
 }
 
 
