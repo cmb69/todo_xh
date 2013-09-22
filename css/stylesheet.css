@@ -1,6 +1,6 @@
 /* the grid */
 div.flexigrid {font-size: 100%}
-table.todo_grid td[abbr='notes'] {white-space: normal !important}
+table.todo_grid td {white-space: normal !important}
 
 /* the states */
 span.todo_state_idea {}
