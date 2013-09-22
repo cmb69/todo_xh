@@ -29,9 +29,6 @@ label.todo_label {float:left; width: 100px}
 #todo_voting table {border-collapse: collapse}
 #todo_voting table td {border: 1px solid #888; padding: 0.2em}
 
-/* powered by link; do not make it invisible via CSS; instead remove it in "Plugin Language" */
-div.todo_powered_by {font-size: 85%; text-align: center; margin: 1em 0}
-
 /* back-end */
 img.todo_plugin_icon {display: block; float: left; margin: 0 20px 10px 0}
 p.todo_license {clear: both; text-align: justify}
