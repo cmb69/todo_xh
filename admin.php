@@ -94,7 +94,7 @@ function Todo_systemCheck()
     foreach (array('config/', 'css/', 'languages/') as $folder) {
         $folders[] = $pth['folder']['plugins'] . 'todo/' . $folder;
     }
-    $folders[] = todo_data_folder();
+    $folders[] = Todo_dataFolder();
     foreach ($folders as $folder) {
         $o .= (is_writable($folder) ? $ok : $warn)
             . '&nbsp;&nbsp;' . sprintf($ptx['syscheck_writable'], $folder)
@@ -111,13 +111,13 @@ function Todo_systemCheck()
 function Todo_resetVotes()
 {
     $name = $_GET['todo_name'];
-    todo_lock($name, LOCK_EX);
-    $todos = todo_read_data($name);
+    Todo_lock($name, LOCK_EX);
+    $todos = Todo_readData($name);
     foreach ($todos as $key => $todo) {
         $todos[$key]['votes'] = array();
     }
-    todo_write_data($name, $todos);
-    todo_lock($name, LOCK_UN);
+    Todo_writeData($name, $todos);
+    Todo_lock($name, LOCK_UN);
     return Todo_adminMain();
 }
 
@@ -132,7 +132,7 @@ function Todo_adminMain()
 {
     global $plugin_tx;
 
-    $todos = glob(todo_data_folder() . '*.dat');
+    $todos = glob(Todo_dataFolder() . '*.dat');
     $o = '<div class="plugineditcaption">Todo</div>'
         . '<ul>';
     foreach ($todos as $todo) {
