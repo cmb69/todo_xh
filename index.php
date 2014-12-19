@@ -18,6 +18,9 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
     exit;
 }
 
+/**
+ * The plugin version.
+ */
 define('TODO_VERSION', '1alpha5');
 
 /**
@@ -169,7 +172,7 @@ function Todo_writeData($name, $data)
  * Writes the JS and CSS to <head>.
  *
  * @global array  The paths of system files and folders.
- * @global string $hjs The (X)HTML fragment to insert into the head element.
+ * @global string The (X)HTML fragment to insert into the head element.
  * @global array  The configuration of the plugins.
  * @global array  The localization of the plugins.
  *
