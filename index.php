@@ -90,7 +90,8 @@ function Todo_dataFolder()
             e('cntopen', 'folder', $fn);
         }
     } else {
-        if (!mkdir($fn, 0777, true)) {
+        $mkdir = 'mkdir';
+        if (!$mkdir($fn, 0777, true)) {
             e('cntsave', 'folder', $fn);
         }
     }
