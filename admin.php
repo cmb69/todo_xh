@@ -3,7 +3,7 @@
 /**
  * Back-end of Todo_XH.
  *
- * Copyright (c) 2012-2013 Christoph M. Becker (see license.txt)
+ * Copyright (c) 2012-2014 Christoph M. Becker (see license.txt)
  */
 
 
@@ -24,7 +24,7 @@ function todo_version() {
     return '<h1><a href="http://3-magi.net/?CMSimple_XH/Todo_XH">Todo_XH</a></h1>'."\n"
 	    .tag('img class="todo_plugin_icon" src="'.$pth['folder']['plugins'].'todo/todo.png" alt="Plugin icon"')."\n"
 	    .'<p style="margin-top: 1em">Version: '.TODO_VERSION.'</p>'."\n"
-	    .'<p>Copyright &copy; 2012-2013 <a href="http://3-magi.net/">Christoph M. Becker</a></p>'."\n"
+	    .'<p>Copyright &copy; 2012-2014 <a href="http://3-magi.net/">Christoph M. Becker</a></p>'."\n"
 	    .'<p class="todo_license">This program is free software: you can redistribute it and/or modify'
 	    .' it under the terms of the GNU General Public License as published by'
 	    .' the Free Software Foundation, either version 3 of the License, or'
