@@ -21,7 +21,7 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
 /**
  * The plugin version.
  */
-define('TODO_VERSION', '1alpha5');
+define('TODO_VERSION', '@TODO_VERSION@');
 
 /**
  * Backward compatibility.
