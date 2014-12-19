@@ -1,0 +1,29 @@
+Version 1alpha5 - internally released 2013-09-17
+* added ID column (default for sorting)
+* removed powered by link
+
+Version 1alpha4 - internally released 2012-11-19
+* implemented resetting of votes from back-end
+
+Version 1alpha3 - internally released 2012-07-04
+* made sorting and filtering case insensitive (but not yet locale aware)
+* added list view signals, if current user has already voted
+
+Version 1alpha2 - internally released 2012-06-13
+* changed: states have classes instead of fixed colors (inspired by svasti)
+* changed: default column widths and font-size larger (suggested by svasti)
+* added possibility to vote (suggested by svasti)
+
+Version 1alpha1 - internally released 2012-06-10
+* fixed bug: empty link field was displayed (reported by svasti)
+* fixed bug: newlines were not properly escaped in JSON response
+* fixed bug: list refresh was done asynchronously
+* added copyright and license information
+* added basic back-end
+* added i18n
+* added config options folder_data and col_widths
+* added file locking and some error handling
+* cleaned up code
+
+Version 1dev1 - internally released 2012-06-06
+* initial release
