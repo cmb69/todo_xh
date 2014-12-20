@@ -427,12 +427,12 @@ class Todo_Controller
         $qtype = $_GET['qtype'];
         $query = stsl($_GET['query']);
         if (!empty($query)) {
+            include_once UTF8 . '/stripos.php';
             $data = array_filter(
                 $data,
                 create_function(
                     '$x',
-                    "return mb_stripos(\$x['$qtype'], '$query', 0, 'UTF-8')"
-                    . "!== false;"
+                    "return utf8_stripos(\$x['$qtype'], '$query', 0) !== false;"
                 )
             );
         }

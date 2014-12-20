@@ -29,35 +29,6 @@ require_once $pth['folder']['plugin_classes'] . 'Controller.php';
 define('TODO_VERSION', '@TODO_VERSION@');
 
 /**
- * Backward compatibility.
- */
-if (!function_exists('mb_stripos')) {
-    /**
-     * Finds position of first occurrence of a string within another,
-     * case insensitive
-     *
-     * @param string $haystack A haystack.
-     * @param string $needle   A needle.
-     * @param int    $offset   A position to start searching.
-     * @param string $encoding A character enconding name.
-     *
-     * @return int
-     */
-// @codingStandardsIgnoreStart
-    function mb_stripos($haystack, $needle, $offset = 0, $encoding = null)
-    {
-// @codingStandardsIgnoreEnd
-        if (!isset($encoding)) {
-            $encoding = mb_internal_encoding();
-        }
-        return mb_stripos(
-            mb_strtolower($haystack, $encoding),
-            mb_strtolower($needle, $encoding), $offset, $encoding
-        );
-    }
-}
-
-/**
  * The main function. Returns the grid widget, and dispatches on all following
  * AJAX requests.
  *
